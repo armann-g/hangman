@@ -16,7 +16,7 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0):
 
     secret_word = words[word_index].upper()
     guessed_letters = []
-    attempts = 5
+    attempts = 7
 
     hearts = ft.Text(size=32, color="red")
     word_display = ft.Text(size=32, weight=ft.FontWeight.BOLD)
