@@ -62,7 +62,9 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0):
                 display += "_ "
         word_display.value = display
         hearts.value = "❤ " * attempts
-        stage_index = max(0, 5 - attempts)
+        stage_index = 5 - attempts
+        if stage_index < 0:
+            stage_index = 0
         hangman_display.content.value = hangman_stages[stage_index]
         score_text.value = f"Score: {leaderboard['score']}"
         page.update()
