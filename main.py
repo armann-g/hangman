@@ -1,6 +1,8 @@
 import flet as ft
 import random
 from words import words
+from mymodules import player_name_ctrl
+
 
 random.shuffle(words)
 
@@ -147,8 +149,9 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0):
                                ft.Column(rows, spacing=5)],
                               alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
 
+    player_name_control = player_name_ctrl.PlayerNameControl("Player1",None)
     page.controls.clear()
-    page.add(ft.Row([buttons_column, center_column, message_column],
+    page.add(ft.Row([buttons_column, center_column, message_column, player_name_control],
                     alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=50))
     update_ui()
 
