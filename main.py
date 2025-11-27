@@ -158,6 +158,8 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0):
 def main(page: ft.Page):
     page.title = "Hangman Game"
     page.bgcolor = "#0D0D0D"
+    page.theme_mode = ft.ThemeMode.DARK
+
     page.bgimage = ft.DecorationImage(src="background.jpg", fit=ft.ImageFit.COVER, repeat=ft.ImageRepeat.NO_REPEAT, opacity=0.15)
     page.theme = ft.Theme(font_family="Comic Sans MS")
     HomeView(page, {"score":0, "hints":3})
