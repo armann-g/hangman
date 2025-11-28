@@ -1,5 +1,4 @@
 import flet as ft
-from typing import Any
 
 def create_hangman_display(width: int = 260, height: int = 200) -> ft.Container:
     return ft.Container(
