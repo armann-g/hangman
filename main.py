@@ -205,11 +205,16 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
 
 def main(page: ft.Page):
     page.title = "Hangman Game"
-    page.bgcolor = "#0D0D0D"
-    page.theme_mode = ft.ThemeMode.DARK
-    page.bgimage = ft.DecorationImage(src="background.jpg", fit=ft.ImageFit.COVER,
-                                     repeat=ft.ImageRepeat.NO_REPEAT, opacity=0.15)
-    page.theme = ft.Theme(font_family="Segoe UI")
-    HomeView(page, {"score":0, "hints":3})
+    page.bgcolor = "#0D0D0D"  # dark background
+    page.theme_mode = ft.ThemeMode.DARK  # dark theme enabled
+    page.bgimage = ft.DecorationImage(
+        src="background.jpg",
+        fit=ft.ImageFit.COVER,
+        repeat=ft.ImageRepeat.NO_REPEAT,
+        opacity=0.15
+    )
+    page.theme = ft.Theme(font_family="Segoe UI")  # font
+    HomeView(page, {"score": 0, "hints": 3})
+
 
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)
