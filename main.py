@@ -185,11 +185,30 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
                                 next_btn, create_button("🏠 Home", lambda e: HomeView(page, leaderboard))],
                                alignment=ft.MainAxisAlignment.START, spacing=15)
 
-    message_column = ft.Column([ft.Container(content=message, width=250, height=100,
-                                             alignment=ft.alignment.center_left,
-                                             padding=ft.Padding(10,10,10,10), bgcolor="#1A1A1A",
-                                             border_radius=10, border=ft.border.all(2, "#FFD369"))],
-                               alignment=ft.MainAxisAlignment.START)
+    # Style player name
+    player_name_control = player_name_ctrl.PlayerNameControl("Player1", None)
+    player_name_control.name_text.size = 28
+    player_name_control.name_text.weight = ft.FontWeight.BOLD
+    player_name_control.name_text.color = "#FFD369"
+
+    message_column = ft.Column([
+        ft.Row(
+            [player_name_control],
+            alignment=ft.MainAxisAlignment.CENTER
+        ),
+
+        ft.Container(
+            content=message,
+            width=250,
+            height=100,
+            alignment=ft.alignment.center_left,
+            padding=ft.Padding(10, 10, 10, 10),
+            bgcolor="#1A1A1A",
+            border_radius=10,
+            border=ft.border.all(2, "#FFD369")
+        )
+    ],
+        alignment=ft.MainAxisAlignment.START)
 
     center_column = ft.Column([ft.Text(f"Word {word_index+1}/{len(word_list)}", size=28, color="#FFFFFF", font_family="Impact"),
                                hangman_display, hearts, tiles_row,
@@ -197,19 +216,23 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
                                ft.Column(rows, spacing=5)],
                               alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
 
-    player_name_control = player_name_ctrl.PlayerNameControl("Player1", None)
     page.controls.clear()
-    page.add(ft.Row([buttons_column, center_column, message_column, player_name_control],
+    page.add(ft.Row([buttons_column, center_column, message_column],
                     alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=50))
     update_ui()
 
 def main(page: ft.Page):
     page.title = "Hangman Game"
-    page.bgcolor = "#0D0D0D"
-    page.theme_mode = ft.ThemeMode.DARK
-    page.bgimage = ft.DecorationImage(src="background.jpg", fit=ft.ImageFit.COVER,
-                                     repeat=ft.ImageRepeat.NO_REPEAT, opacity=0.15)
-    page.theme = ft.Theme(font_family="Segoe UI")
-    HomeView(page, {"score":0, "hints":3})
+    page.bgcolor = "#0D0D0D"  # dark background
+    page.theme_mode = ft.ThemeMode.DARK  # dark theme enabled
+    page.bgimage = ft.DecorationImage(
+        src="background.jpg",
+        fit=ft.ImageFit.COVER,
+        repeat=ft.ImageRepeat.NO_REPEAT,
+        opacity=0.15
+    )
+    page.theme = ft.Theme(font_family="Segoe UI")  # font
+    HomeView(page, {"score": 0, "hints": 3})
+
 
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)
