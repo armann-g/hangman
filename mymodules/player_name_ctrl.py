@@ -8,7 +8,6 @@ class PlayerNameControl(ft.Text):
         self.player_name = player_name
         self.on_name_change = on_name_change
 
-        # MAIN TEXT CONTROL -> we expose this as name_text
         self.name_text = self
 
         span = ft.TextSpan(
@@ -37,7 +36,6 @@ class PlayerNameControl(ft.Text):
                 if len(txt_name.current.value) == 0:
                     return
 
-                # Update the stored name
                 self.player_name = txt_name.current.value
                 self.spans[0].text = self.player_name
 

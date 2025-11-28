@@ -26,6 +26,7 @@ def create_stat_text(label, value, color, size=24, font="Segoe UI"):
         font_family=font
     )
 
+
 def HomeView(page: ft.Page, leaderboard):
     leaderboard.setdefault("high_score", leaderboard["score"])
     leaderboard_table = create_leaderboard_table([{"name": "Player1", "score": leaderboard.get("high_score", 0)}])
@@ -92,14 +93,13 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
     secret_word = word_list[word_index].upper()
     guessed_letters = []
     attempts = 6
-    hints = leaderboard.get("hints", 3)
+    initial_hints = 3
+    hints = initial_hints
     leaderboard["hints"] = hints
     score = leaderboard["score"]
     hangman_stages = ["", "O", "O\n |", "O\n/|", "O\n/|\\", "O\n/|\\\n/", "O\n/|\\\n/ \\"]
 
-    # USE the animation module to create the hangman display
     hangman_display = create_hangman_display(width=260, height=200)
-
     message = ft.Text("", size=24, color="#FFD369", weight=ft.FontWeight.BOLD, font_family="Segoe UI")
     hearts = ft.Text("❤ " * attempts, size=32, color="#FF2B2B", weight=ft.FontWeight.BOLD, font_family="Courier New")
     tiles_row = ft.Row(alignment=ft.MainAxisAlignment.CENTER, spacing=8)
@@ -117,8 +117,6 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
                              width=50, height=50, border=ft.border.all(2, "#FFD369"),
                              border_radius=5, alignment=ft.alignment.center, bgcolor="#1A1A1A")
             )
-
-        # use helper to set stage (fade-in). then update the container/page so animation happens
         set_hangman_stage(hangman_display, hangman_stages[6 - attempts])
         hangman_display.update()
 
@@ -152,17 +150,19 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
         if letter not in secret_word:
             attempts -= 1
             message.value = "❌ Wrong!"
-
-            # call the shared flash_and_shake animation (module handles update calls)
             flash_and_shake(hangman_display, page)
-
         else:
             message.value = "✔ Correct!"
         update_ui()
         check_word()
 
-    def restart_word(e): HangmanView(page, leaderboard, word_index, word_list)
-    def next_word(e): HangmanView(page, leaderboard, word_index + 1, word_list)
+    def restart_word(e):
+        leaderboard["hints"] = initial_hints
+        HangmanView(page, leaderboard, word_index, word_list)
+
+    def next_word(e):
+        HangmanView(page, leaderboard, word_index + 1, word_list)
+
     def hint_word(e):
         nonlocal hints
         if hints <= 0: return
@@ -191,58 +191,51 @@ def HangmanView(page: ft.Page, leaderboard, word_index=0, word_list=None):
 
     next_btn = create_button("➡ Next Word", next_word, width=120)
     next_btn.disabled = True
-    buttons_column = ft.Column([create_button("💡 Hint", hint_word), create_button("🔄 Restart", restart_word),
-                                next_btn, create_button("🏠 Home", lambda e: HomeView(page, leaderboard))],
+
+    buttons_column = ft.Column([create_button("💡 Hint", hint_word),
+                                create_button("🔄 Restart", restart_word),
+                                next_btn,
+                                create_button("🏠 Home", lambda e: HomeView(page, leaderboard))],
                                alignment=ft.MainAxisAlignment.START, spacing=15)
 
-    # Style player name
     player_name_control = player_name_ctrl.PlayerNameControl("Player1", None)
     player_name_control.name_text.size = 28
     player_name_control.name_text.weight = ft.FontWeight.BOLD
     player_name_control.name_text.color = "#FFD369"
 
     message_column = ft.Column([
-        ft.Row(
-            [player_name_control],
-            alignment=ft.MainAxisAlignment.CENTER
-        ),
+        ft.Row([player_name_control], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Container(content=message, width=250, height=100, alignment=ft.alignment.center_left,
+                     padding=ft.Padding(10, 10, 10, 10), bgcolor="#1A1A1A",
+                     border_radius=10, border=ft.border.all(2, "#FFD369"))
+    ], alignment=ft.MainAxisAlignment.START)
 
-        ft.Container(
-            content=message,
-            width=250,
-            height=100,
-            alignment=ft.alignment.center_left,
-            padding=ft.Padding(10, 10, 10, 10),
-            bgcolor="#1A1A1A",
-            border_radius=10,
-            border=ft.border.all(2, "#FFD369")
-        )
-    ],
-        alignment=ft.MainAxisAlignment.START)
-
-    center_column = ft.Column([ft.Text(f"Word {word_index+1}/{len(word_list)}", size=28, color="#FFFFFF", font_family="Impact"),
-                               hangman_display, hearts, tiles_row,
-                               ft.Row([score_text, attempts_text, hints_text], alignment=ft.MainAxisAlignment.CENTER, spacing=20),
-                               ft.Column(rows, spacing=5)],
-                              alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
+    center_column = ft.Column([
+        ft.Text(f"Word {word_index + 1}/{len(word_list)}", size=28, color="#FFFFFF", font_family="Impact"),
+        hangman_display, hearts, tiles_row,
+        ft.Row([score_text, attempts_text, hints_text], alignment=ft.MainAxisAlignment.CENTER, spacing=20),
+        ft.Column(rows, spacing=5)
+    ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10)
 
     page.controls.clear()
     page.add(ft.Row([buttons_column, center_column, message_column],
                     alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER, spacing=50))
+
     update_ui()
+
 
 
 def main(page: ft.Page):
     page.title = "Hangman Game"
-    page.bgcolor = "#0D0D0D"  # dark background
-    page.theme_mode = ft.ThemeMode.DARK  # dark theme enabled
+    page.bgcolor = "#0D0D0D"
+    page.theme_mode = ft.ThemeMode.DARK
     page.bgimage = ft.DecorationImage(
         src="background.jpg",
         fit=ft.ImageFit.COVER,
         repeat=ft.ImageRepeat.NO_REPEAT,
         opacity=0.15
     )
-    page.theme = ft.Theme(font_family="Segoe UI")  # font
+    page.theme = ft.Theme(font_family="Segoe UI")
     HomeView(page, {"score": 0, "hints": 3})
 
 
